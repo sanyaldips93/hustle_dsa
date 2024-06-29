@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import List
+
 
 class Solution:
     def frequencySort(self, s: str) -> str:
@@ -20,5 +20,6 @@ class Solution:
                     res += (val*i)
         
         return res
+    
 
 print(Solution().frequencySort('tree'))
