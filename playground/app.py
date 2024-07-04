@@ -2,23 +2,26 @@ from collections import defaultdict
 from typing import List
 
 class Solution:
-    def frequencySort(self, s: str) -> str:
-        arr = [set() for _ in range(len(s))]
-        map = defaultdict(int)
+    def myPow(self, x: float, n: int) -> float:
+        # Base cases
+        if n == 0:
+            return 1
+        if n == 1:
+            return x
 
-        for ch in s:
-            freq = map[ch]
-            if freq > 0:
-                arr[freq].remove(ch)
-            arr[freq+1].add(ch)
-            map[ch] += 1
-        
-        res = ""
-        for i in range(len(arr)-1, -1, -1):
-            if arr[i]:
-                for val in arr[i]:
-                    res += (val*i)
-        
-        return res
+        # Handle negative exponent
+        if n < 0:
+            x = 1 / x
+            n = -n
 
-print(Solution().frequencySort('tree'))
+        # Recursive calculation
+        # If n is even
+        if n % 2 == 0:
+            half = self.myPow(x, n // 2)
+            return half * half
+        # If n is odd
+        else:
+            half = self.myPow(x, (n - 1) // 2)
+            return x * half * half
+
+print(Solution().myPow(2.0, -2))
