@@ -1,4 +1,6 @@
 from typing import List
+import sys
+sys.setrecursionlimit(10**6)
 
 class Solution:
     def reverse(self,stack): 

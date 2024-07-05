@@ -2,26 +2,19 @@ from collections import defaultdict
 from typing import List
 
 class Solution:
-    def myPow(self, x: float, n: int) -> float:
-        # Base cases
-        if n == 0:
-            return 1
-        if n == 1:
-            return x
+    def combinationSum(self, arr: List[int], target: int) -> List[List[int]]:
+        res = []
+        def dfs(i, tmp):
+            if sum(tmp) == target:
+                return res.append(tmp.copy())
+            if i >= len(arr) or sum(tmp) > target:
+                return
+            tmp.append(arr[i])
+            dfs(i+1, tmp)
+            tmp.pop()
+            dfs(i+1, tmp)
+        dfs(0, [])
+        return len(res)
+        
 
-        # Handle negative exponent
-        if n < 0:
-            x = 1 / x
-            n = -n
-
-        # Recursive calculation
-        # If n is even
-        if n % 2 == 0:
-            half = self.myPow(x, n // 2)
-            return half * half
-        # If n is odd
-        else:
-            half = self.myPow(x, (n - 1) // 2)
-            return x * half * half
-
-print(Solution().myPow(2.0, -2))
+print(Solution().combinationSum([2,3,6,7], 7))
