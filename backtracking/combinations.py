@@ -16,3 +16,5 @@ class Solution:
         
         backtrack(1, [])
         return res
+    
+print(Solution().combine(4, 3))

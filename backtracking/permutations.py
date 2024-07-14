@@ -14,8 +14,9 @@ class Solution:
                 perm.append(n)
             res.extend(perms)
             nums.append(n)
+        
         return res
-    
+
 print(Solution().permute([1,2,3]))
     
 '''
