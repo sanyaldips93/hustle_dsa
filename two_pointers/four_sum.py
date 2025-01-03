@@ -2,7 +2,7 @@ from typing import List
 
 
 class Solution:
-    def fourSum(self, nums: List[int], target: int) -> List[List[int]]:
+    def fourSum(self, nums: List[int], target: int, k: int) -> List[List[int]]:
         nums.sort()
         res, quad = [], []
         def kSum(k, start, target):
@@ -27,5 +27,6 @@ class Solution:
                         l += 1
                         while l < r and nums[l] == nums[l - 1]:
                             l += 1
-        kSum(4, 0, target)
+        kSum(k, 0, target)
         return res
+print(Solution().fourSum)
