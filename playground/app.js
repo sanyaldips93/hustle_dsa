@@ -1,58 +1,145 @@
-/**
- * Find the smallest continuous subarray with sum greater than a given value
-    arr[] = [1, 4, 45, 6, 0, 19]
-    target  =  51
-    Output is {4, 45, 6}
- */
+class CronParser {
+  constructor(expression) {
+    this.parts = expression.split(' ');
+    if (this.parts.length !== 5) {
+      throw new Error('Invalid cron expression. Expected 5 fields.');
+    }
 
-function subArray(arr, target) {
-  let left = 0;
-  let right = 0;
-  const length = arr.length;
-  let tempSum = 0;
-  const idxArr = [left, right];
-  let minLength = 8888;
-  while (right < length) {
-    tempSum += arr[right];
-    if (tempSum > target) {
-      while(tempSum > target) {
-        tempSum -= arr[left];
-        left = left + 1;
-      }
-      if ((right - left + 1) < minLength) {
-        minLength = right - left + 1;
-        idxArr[0] = left - 1;
-        idxArr[1] = right;
+    this.parsers = [
+      new MinuteParser(this.parts[0]),
+      new HourParser(this.parts[1]),
+      new DayOfMonthParser(this.parts[2]),
+      new MonthParser(this.parts[3]),
+      new DayOfWeekParser(this.parts[4]),
+    ];
+  }
+
+  matches(date) {
+    return this.parsers.every(parser => parser.matches(date));
+  }
+
+  getNext(date) {
+    let nextDate = new Date(date.getTime() + 60000); // Start from the next minute
+    while (!this.matches(nextDate)) {
+      nextDate = new Date(nextDate.getTime() + 60000); // Increment by one minute
+    }
+    return nextDate;
+  }
+}
+
+class BaseParser {
+  constructor(expression, rangeStart, rangeEnd) {
+    this.expression = expression;
+    this.rangeStart = rangeStart;
+    this.rangeEnd = rangeEnd;
+
+    this.validateExpression();
+  }
+
+  validateExpression() {
+    if (this.expression === '*') return; // Match everything
+
+    const parsedValues = this.parseExpression();
+    if (!parsedValues) {
+      throw new Error(`Invalid cron expression: ${this.expression}`);
+    }
+
+    for (const value of parsedValues) {
+      if (value < this.rangeStart || value > this.rangeEnd) {
+        throw new Error(`Value ${value} out of range for ${this.rangeStart}-${this.rangeEnd}`);
       }
     }
-    right = right + 1;
   }
-  
-  const finalArray = [];
-  for(let i = idxArr[0]; i <= idxArr[1]; i++) {
-    finalArray.push(arr[i]);
+
+  parseExpression() {
+    if (this.expression === '*') {
+      return null; // Match all
+    }
+    if (this.expression.includes(',')) {
+      return this.expression.split(',').map(Number);
+    }
+    if (this.expression.includes('-')) {
+      const [start, end] = this.expression.split('-').map(Number);
+      return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+    }
+    if (this.expression.includes('/')) {
+      const [base, step] = this.expression.split('/').map(Number);
+      return Array.from({ length: (this.rangeEnd - base) / step + 1 }, (_, i) => base + i * step);
+    }
+    const value = Number(this.expression);
+    if (isNaN(value)) {
+      throw new Error(`Invalid number: ${this.expression}`);
+    }
+    return [value];
   }
-  return finalArray;
-}  
+}
 
-console.log(subArray([ 20, 3,9,6, 21, 1, 2,0, 3, 6, 45, 4, 1, 35, 4,5, 1, 6, 20, 4 ] , 54));
+class MinuteParser extends BaseParser {
+  constructor(expression) {
+    super(expression, 0, 59); // Minute range
+  }
 
+  matches(date) {
+    if (!this.parsedValues) {
+      this.parsedValues = this.parseExpression();
+    }
+    return this.parsedValues === null || this.parsedValues.includes(date.getMinutes());
+  }
+}
 
+class HourParser extends BaseParser {
+  constructor(expression) {
+    super(expression, 0, 23); // Hour range
+  }
 
-/**
- * occurence = {5:1, 2:1, 6:3, 9:1, 11:1, 4:2, 3:2};
- * - [5, 2, 6, 3, 9, 11, 6, 4, 4, 3, 6] 
- * target = 9
- * hash[7] = 2;
- * hash[3] = 6;
- * hash[6] = 3;
- */
+  matches(date) {
+    if (!this.parsedValues) {
+      this.parsedValues = this.parseExpression();
+    }
+    return this.parsedValues === null || this.parsedValues.includes(date.getHours());
+  }
+}
 
-/**
- * Step 1 : we find the frequency of each number and store it in a hash table.
- * Step 2 : we travese through the input array to find pairs.
- * Step 3 : once we find a hit, we reduce the frequency of each numbers in the frequency hash table to weed out multiple duplicacies.
- * We also save the pair in a final list.
- * Step 4: repeat this process till the end of the array.
- * Step 5: return the final list.
- */
+class DayOfMonthParser extends BaseParser {
+  constructor(expression) {
+    super(expression, 1, 31); // Day range
+  }
+
+  matches(date) {
+    if (!this.parsedValues) {
+      this.parsedValues = this.parseExpression();
+    }
+    // Handle calendar constraints for months
+    const maxDays = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+    return (
+      this.parsedValues === null ||
+      this.parsedValues.some(day => day >= 1 && day <= maxDays)
+    );
+  }
+}
+
+class MonthParser extends BaseParser {
+  constructor(expression) {
+    super(expression, 1, 12); // Month range
+  }
+
+  matches(date) {
+    if (!this.parsedValues) {
+      this.parsedValues = this.parseExpression();
+    }
+    return this.parsedValues === null || this.parsedValues.includes(date.getMonth() + 1);
+  }
+}
+
+class DayOfWeekParser extends BaseParser {
+  constructor(expression) {
+    super(expression, 0, 6); // Day of week range
+  }
+
+  matches(date) {
+    if (!this.parsedValues) {
+      this.parsedValues = this.parseExpression();
+    }
+    return this.parsedValues === null || this.parsedValues.includes(date.getDay());
+  }
+}
