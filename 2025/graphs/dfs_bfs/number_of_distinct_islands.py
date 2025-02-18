@@ -1,6 +1,5 @@
 import sys
 from typing import List
-sys.setrecursionlimit(10**8)
 
 class Solution:
     def countDistinctIslands(self, grid : List[List[int]]) -> int:
@@ -17,7 +16,6 @@ class Solution:
             shape.append((r-rr, c-rc))
             for dr, dc in [[0, 1], [0, -1], [1, 0], [-1, 0]]:
                 dfs(r+dr, c+dc, rr, rc, shape)
-        
         
         count = 0
         for r in range(rows):
