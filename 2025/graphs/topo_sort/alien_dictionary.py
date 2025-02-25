@@ -1,14 +1,13 @@
-from collections import deque, defaultdict
-from typing import List, Tuple
+from collections import deque
 class Solution:
-    def findOrder(self, words):
+    def findOrder(words):
         # create a set of chars
         chars = set()
         for word in words:
             for ch in word:
                 chars.add(ch)
         # create adjacency matrix from words
-        adj = {i:[] for i in chars}
+        adj = {ch:[] for ch in chars}
         for i in range(len(words)-1):
             word1 = words[i]
             word2 = words[i+1]
@@ -18,6 +17,7 @@ class Solution:
             for i in range(minlen):
                 if word1[i] != word2[i]:
                     adj[word1[i]].append(word2[i])
+                    break
         
         #create indegree
         indegree = {}
@@ -33,8 +33,6 @@ class Solution:
                 q.append(i)
         #run kahn's algo to find the safe list
         topo = []
-        if len(q) == 0:
-            return ""
         while q:
             node = q.popleft()
             topo.append(node)
@@ -43,7 +41,3 @@ class Solution:
                 if indegree[nei] == 0:
                     q.append(nei)
         return "" if len(topo) != len(chars) else "".join(topo)
-
-
-
-print(Solution().findOrder(["ab", "cd", "ef", "ad"]))

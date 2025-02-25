@@ -38,6 +38,7 @@ class Solution:
        
         while stack:
             node = stack.pop()
+            # if this is infinite, this node is not reachable from the source node. so there is no point checking.
             if dist[node] != float("inf"):
                 for nei in adj[node]:
                     des = nei[0]
