@@ -39,6 +39,3 @@ class Solution:
                 if grid[r][c] == 1:
                     dfs(r, c)
                     return bfs()
-
-
-print(Solution().shortestBridge([[0,1],[1,0]]))
