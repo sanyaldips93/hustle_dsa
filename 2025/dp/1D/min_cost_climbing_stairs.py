@@ -13,6 +13,17 @@ class Solution:
         
         return min(dp[n-1], dp[n-2])
 
+    def minCostClimbingStairs2(self, cost: List[int]) -> int:
+        n = len(cost)
+        cost.append(0)
+        dp = [0] * (n+1)
+        dp[0] = cost[0]
+        dp[1] = min(dp[0]+cost[1], cost[1])
+        
+        for i in range(2, n+1):
+            dp[i] = cost[i] + min(dp[i-1], dp[i-2])
+        return dp[n]
+
 
 # Memoization
 
