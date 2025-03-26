@@ -1,51 +1,25 @@
 from collections import defaultdict, deque
 from typing import List
 
-class Solution:
-    def accountsMerge(self, accounts: List[List[str]]) -> List[List[str]]:
-        n = len(accounts)
-        par = [i for i in range(n)]
-        rank = [1] * n
+class Solution2:
+    def minimumTotal(self, triangle: List[List[int]]) -> int:
+        n = len(triangle)
+        m = len(triangle[n-1])
 
-        def find(x):
-            if x == par[x]:
-                return x
-            par[x] = find(par[x])
-            return par[x]
-        
-        def union(x, y):
-            px = find(x)
-            py = find(y)
-            if px == py:
-                return
-            if rank[px] > rank[py]:
-                par[py] = px
-            elif rank[py] > rank[px]:
-                par[px] = py
-            else:
-                par[py] = px
-                rank[px] += 1
+        if n == 1 and m == 1:
+            return triangle[n-1][m-1]
 
-        emailToAcc = {}
-        for i in range(len(accounts)):
-            emails = accounts[i][1:]
-            for email in emails:
-                if email in emailToAcc:
-                    union(emailToAcc[email], i)
-                else:
-                    emailToAcc[email] = i
+        dp = [[-1] * m for _ in range(n)]
         
-        accToEmail = defaultdict(list)
-        for email in emailToAcc:
-            account = emailToAcc[email]
-            pac = find(account)
-            accToEmail[pac].append(email)
+        for j in range(n-1):
+            dp[n-1][j] = triangle[n-1][j]
         
-        res = []
-        for i in range(len(accToEmail)):
-            res.append([accounts[i][:1]] + accToEmail[i])
+        for i in range(n-2, -1, -1):
+            for j in range(i, -1, -1):
+                d = dp[i+1][j] + triangle[i][j]
+                dg = dp[i+1][j+1] + triangle[i][j]
+                dp[i][j] = min(d, dg)
         
-        return res
+        return dp[0][0]
 
-
-print(Solution().accountsMerge([["John","johnsmith@mail.com","john_newyork@mail.com"],["John","johnsmith@mail.com","john00@mail.com"],["Mary","mary@mail.com"],["John","johnnybravo@mail.com"]]))
+print(Solution2.minimumTotal([[1],[2,3]]))
