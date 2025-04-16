@@ -29,3 +29,32 @@ class Solution:
         return -1
     
 print(Solution().minimumMultiplications([2,5,7],3,30))
+
+
+from typing import List
+from collections import deque
+
+# DFS
+class Solution2:
+    
+    def minimumMultiplications(self, arr : List[int], start : int, end : int) -> int:
+        # code here
+        n = len(arr)
+        mod = 100000
+        ways = [float("inf")] * mod
+        
+        def dfs(cur, steps):
+            if steps >= ways[cur]:
+                return
+            if cur == end:
+                ways[cur] = steps
+                return
+            if cur > end:
+                return
+            
+            for i in range(n):
+                new = (cur*arr[i]) % mod
+                dfs(new,steps+1)
+        
+        dfs(start, 0)        
+        return ways[end] if ways[end] != float("inf") else -1

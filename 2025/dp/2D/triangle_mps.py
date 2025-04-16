@@ -44,7 +44,23 @@ class Solution2:
 
 print(Solution2().minimumTotal([[1],[2,3]]))
 
+# Tabulation
+class Solution4:
+    def minimumTotal(self, triangle: List[List[int]]) -> int:
+        m = len(triangle)
+        n = len(triangle[m-1])
+        dp = [[-1] * n for _ in range(m)]
+        
+        for r in range(m-1, -1, -1):
+            for c in range(r, -1, -1):
+                if r == m-1:
+                    dp[r][c] = triangle[r][c]
+                    continue
+                dp[r][c] = triangle[r][c] + min(dp[r+1][c], dp[r+1][c+1])
+        
+        return dp[0][0]
 
+# Space Optimisation
 class Solution3:
     def minimumTotal(self, triangle: List[List[int]]) -> int:
         n = len(triangle)
@@ -64,6 +80,23 @@ class Solution3:
                 d = dp[j] + triangle[i][j]
                 dg = dp[j+1] + triangle[i][j]
                 temp[j] = min(d, dg)
+            dp = temp
+        
+        return dp[0]
+
+class Solution5:
+    def minimumTotal(self, triangle: List[List[int]]) -> int:
+        m = len(triangle)
+        n = len(triangle[m-1])
+        dp = [0] * n
+        
+        for r in range(m-1, -1, -1):
+            temp = [0] * n
+            for c in range(r, -1, -1):
+                if r == m-1:
+                    temp[c] = triangle[r][c]
+                    continue
+                temp[c] = triangle[r][c] + min(dp[c], dp[c+1])
             dp = temp
         
         return dp[0]

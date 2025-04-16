@@ -1,5 +1,8 @@
 
 # Memoization
+from typing import List
+
+
 class Solution:
     def solve(self, n, m, grid):
         # Code here
@@ -99,3 +102,31 @@ class Solution:
 
         # Step 4: Return answer from the top row (starting positions)
         return dp[0][m-1]
+    
+
+
+# Neetcode
+class Solution:
+    def cherryPickup(self, grid: List[List[int]]) -> int:
+        ROWS = len(grid)
+        COLS = len(grid[0])
+        dp = {}
+        def dfs(r, c1, c2):
+            if min(c1,c2) < 0 or max(c1,c2) >= COLS:
+                return 0
+            if r == ROWS-1:
+                return grid[r][c1] + (grid[r][c2] if c2 != c1 else 0)
+            if (r, c1, c2) in dp:
+                return dp[(r, c1, c2)]
+            
+            maxval = 0
+            for dc1 in range(-1, 2):
+                for dc2 in range(-1, 2):
+                    val = 0
+                    val += grid[r][c1] + (grid[r][c2] if c2 != c1 else 0)
+                    val += dfs(r+1,c1+dc1,c2+dc2)
+                    maxval = max(maxval, val)
+            dp[(r, c1, c2)] = maxval
+            return dp[(r, c1, c2)]
+        
+        return dfs(0,0,COLS-1)
