@@ -24,3 +24,15 @@ class Solution:
         return res if res != float("inf") else -1
 
 print(Solution().coinChange([2],3))
+
+class Solution2:
+    def coinChange(self, coins: List[int], amount: int) -> int:
+        n = len(coins)
+        dp = [float("inf")] * (amount+1)
+        for tar in range(amount+1):
+            if tar % coins[0] == 0:
+                dp[tar] = tar // coins[0]
+        for r in range(1,n):
+            for tar in range(coins[r], amount+1):
+                dp[tar] = min(dp[tar],dp[tar-coins[r]]+1)
+        return dp[amount] if dp[amount] != float("inf") else -1
