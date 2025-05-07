@@ -82,5 +82,30 @@ class Solution5:
                 dp[tar] = dp[tar] + dp[tar-arr[r]]
         
         return dp[d]
+    
+# Partition with given difference
+class Solution6:
+    def findTargetSumWays(self, nums: List[int], target: int) -> int:
+        n = len(nums)
+        total = sum(nums)
+        if total - target < 0: return 0
+        if (total - target) % 2 == 1: return 0
+        d = (total - target) // 2
+        
+        dp = [[0] * (d+1) for _ in range(n)]
+        if nums[0] == 0: dp[0][0] = 2
+        else:
+            dp[0][0] = 1
+            if nums[0] <= d: dp[0][nums[0]] = 1
+        
+        for i in range(1,n):
+            for tar in range(d+1):
+                np = dp[i-1][tar]
+                p = 0
+                if nums[i] <= tar:
+                    p = dp[i-1][tar-nums[i]]
+                dp[i][tar] = p + np
+        
+        return dp[n-1][d]
 
 

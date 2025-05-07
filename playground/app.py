@@ -5,15 +5,16 @@ from typing import List
 from typing import List
 from collections import deque
 class Solution:
-    def coinChange(self, coins: List[int], amount: int) -> int:
-        n = len(coins)
-        dp = [0] * (amount+1)
-        for tar in range(amount+1):
-            if tar % coins[0] == 0:
-                dp[tar] = tar // coins[0]
-        for r in range(1,n):
-            for tar in range(coins[r], amount+1):
-                dp[r][tar] = dp[r][tar] + dp[r][tar-coins[r]]
-        return dp[n-1][amount]
+    def minPathSum(self, grid: List[List[int]]) -> int:
+        m, n = len(grid), len(grid[0])
+        dp = [[float("inf")] * m for _ in range(n)]
 
-print(Solution().coinChange([1,2,5],11))
+        def dfs(i, j):
+            if i == 0 and j == 0: return grid[i][j]
+            if i < 0 or j < 0: return float('inf')
+            if dp[i][j] != float("inf"): return dp[i][j]
+            dp[i][j] = min(dfs(i-1, j), dfs(i, j-1)) + grid[i][j]
+            return dp[i][j]
+        return dfs(m-1, n-1)
+
+print(Solution().minPathSum([[1,2,3],[4,5,6]]))

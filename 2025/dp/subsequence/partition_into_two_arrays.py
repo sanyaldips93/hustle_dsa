@@ -25,11 +25,15 @@ class Solution:
                 
                 dp[i][s] = pick or not_pick
 
-        total = sum(arr)
-        min_diff = float('inf')
+        total = sum(arr)  # Step 1: total sum of array
+        min_diff = float('inf')  # Step 2: initialize minimum difference to large value
+
+        # Step 3: Explore all possible subset sums
         for s in range(range_size):
-            if dp[n-1][s]:
-                subset_sum = s - offset
-                other_sum = total - subset_sum
-                min_diff = min(min_diff, abs(subset_sum - other_sum))
-        return min_diff
+            if dp[n-1][s]:  # if it's possible to form a subset with sum (s - offset)
+                subset_sum = s - offset  # recover actual subset sum (undo the shift)
+                other_sum = total - subset_sum  # remaining elements' sum
+                min_diff = min(min_diff, abs(subset_sum - other_sum))  # update minimum difference
+
+        return min_diff  # Step 4: return the best (smallest) difference found
+

@@ -1,27 +1,46 @@
 
-# Memoization without handling [0] subset case
+# Memoization
 class Solution:
-	def perfectSum(self, arr, target):
-		n = len(arr)
-		dp = {}
-		def dfs(i, cur):
-			if i == 0:
-				if cur == 0 and arr[i] == 0:
-					return 2
-				elif cur == 0 or cur == arr[i]:
-					return 1
-				else: return 0
-			if (i,cur) in dp:
-				return dp[(i,cur)]
-			npick = dfs(i-1, cur)
-			pick = 0
-			if arr[i] <= cur:
-				pick = dfs(i-1, cur-arr[i])
-			dp[(i,cur)] = pick+npick
-			return dp[(i,cur)]
-		return dfs(n-1,target)
-      
-print(Solution().perfectSum([2,5,1,4,3],10))
+    def perfectSum(self, arr, target):
+        n = len(arr)
+        dp = {}  # Memoization dictionary to store (i, cur) -> number of ways
+        
+        def dfs(i, cur):
+            # Base case: if we are at the first element (i==0)
+            if i == 0:
+                # If target is 0 and arr[0] is 0, two choices: pick or not pick the zero
+                if cur == 0 and arr[i] == 0:
+                    return 2
+                # If target is 0 or target matches arr[0], exactly 1 way (either pick it or ignore)
+                elif cur == 0 or cur == arr[i]:
+                    return 1
+                # Otherwise, no valid way
+                else:
+                    return 0
+            
+            # If already solved this subproblem, return cached answer
+            if (i, cur) in dp:
+                return dp[(i, cur)]
+
+            # Two choices at each step: 
+            # 1. Do not pick the current element
+            npick = dfs(i-1, cur)
+
+            # 2. Pick the current element (only if arr[i] <= cur)
+            pick = 0
+            if arr[i] <= cur:
+                pick = dfs(i-1, cur-arr[i])
+
+            # Total ways = pick ways + non-pick ways
+            dp[(i, cur)] = pick + npick
+            return dp[(i, cur)]
+        
+        # Start the recursion from last index with full target
+        return dfs(n-1, target)
+
+# Example usage
+print(Solution().perfectSum([2,5,1,4,3], 10))
+
 
 # Tabulation
 class Solution:
