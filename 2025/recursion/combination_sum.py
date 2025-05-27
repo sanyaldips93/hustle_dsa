@@ -1,9 +1,6 @@
-from collections import defaultdict, deque
 from typing import List
 
-# Play with your code
-from typing import List
-from collections import deque
+
 class Solution:
     def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
         res = []
@@ -21,5 +18,3 @@ class Solution:
         
         recursion(0, [], target)
         return res
-    
-print(Solution().combinationSum([2,3,6,7], 7))
