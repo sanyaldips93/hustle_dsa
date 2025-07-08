@@ -3,18 +3,18 @@ from typing import List
 
 # Play with your code
 class Solution:
-    def findContentChildren(self, g: List[int], s: List[int]) -> int:
-        g.sort()
-        s.sort()
-        l = 0
+    def longestConsecutive(self, nums: List[int]) -> int:
+        nums = set(nums)
         res = 0
-        for child in g:
-            while l < len(s) and  s[l] < child:
-                l += 1
-            if l >= len(s):
-                return res
-            res += 1
-            l += 1
-        return res
+
+        for num in nums:
+            length = 0
+            if not num-1 in nums:
+                length += 1
+                while (num + 1) in nums:
+                    length += 1
+                    num += 1
+            res = max(res, length)
+        return res 
     
-print(Solution().findContentChildren([1,2,3], [1,1]))
+print(Solution().longestConsecutive([1,0,1,2]))

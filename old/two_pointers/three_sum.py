@@ -6,9 +6,9 @@ class Solution:
         nums.sort()
         res = []
         prev = None
-        for i in range(len(nums) - 1):
+        for i in range(len(nums) - 2):
             if nums[i] == prev:
-                continue;
+                continue
             l, r = i + 1, len(nums) - 1
             while l < r:
                 one, two, three = nums[i], nums[l], nums[r]
@@ -19,10 +19,12 @@ class Solution:
                 else:
                     res.append([one, two, three])
                     l = l + 1
-                    while nums[l] == nums[l-1] and l < r:
-                        l += 1
+                    # while nums[l] == nums[l-1] and l < r:
+                    #     l += 1
             prev = nums[i]
         return res
+
+print(Solution().threeSum([-2,-2,-1,1,0,1,2]))
 
 '''
 while nums[l] == nums[l-1] and l < r:
