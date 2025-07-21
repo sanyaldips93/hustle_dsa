@@ -1,20 +1,55 @@
-from collections import defaultdict, deque
+from collections import defaultdict
 from typing import List
 
-# Play with your code
-class Solution:
-    def longestConsecutive(self, nums: List[int]) -> int:
-        nums = set(nums)
-        res = 0
 
-        for num in nums:
-            length = 0
-            if not num-1 in nums:
-                length += 1
-                while (num + 1) in nums:
-                    length += 1
-                    num += 1
-            res = max(res, length)
-        return res 
+class Solution:
+    def accountsMerge(self, accounts: List[List[str]]) -> List[List[str]]:
+        n = len(accounts)
+        par = [i for i in range(n)]
+        rank = [1] * n
+
+        def find(x):
+            if x == par[x]:
+                return x
+            par[x] = find(par[x])
+            return par[x]
+        
+        def union(x, y):
+            px = find(x)
+            py = find(y)
+            if px == py:
+                return
+            if rank[px] > rank[py]:
+                par[py] = px
+            elif rank[py] > rank[px]:
+                par[px] = py
+            else:
+                par[py] = px
+                rank[px] += 1
+
+        emailToAcc = {}
+        for i in range(len(accounts)):
+            emails = accounts[i][1:]
+            for email in emails:
+                if email in emailToAcc:
+                    union(emailToAcc[email], i)
+                else:
+                    emailToAcc[email] = i
+        
+        accToEmail = defaultdict(list)
+        for email in emailToAcc:
+            account = emailToAcc[email]
+            pac = find(account)
+            accToEmail[pac].append(email)
+        
+        res = []
+        for i in range(len(accounts)):
+            if i == find(i):
+                res.append(accounts[i][:1] + sorted(accToEmail[i]))
+        
+        return res
     
-print(Solution().longestConsecutive([1,0,1,2]))
+print(Solution().accountsMerge([["John","johnsmith@mail.com","john_newyork@mail.com"],
+                                ["John","johnsmith@mail.com","john00@mail.com"],
+                                ["Mary","mary@mail.com"],
+                                ["John","johnnybravo@mail.com"]]))
