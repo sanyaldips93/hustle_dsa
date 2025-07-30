@@ -24,3 +24,6 @@ class Solution:
                         q.append(nei)
         
         return topo
+
+# Test for finding cycle in DAG.
+print(Solution().topologicalSort(([1], [0])))
